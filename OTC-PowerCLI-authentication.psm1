@@ -16,7 +16,7 @@ function Catch-Error {
         }
     }
 }
-#export-modulemember -function Catch-Error
+export-modulemember -function Catch-Error
 
 ## Global Authentication Cmdlets
 function Clear-OTCauthToken {
