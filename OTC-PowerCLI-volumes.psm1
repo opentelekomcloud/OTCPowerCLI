@@ -52,39 +52,83 @@ function Get-DiskScsiLuns {
    
     process {
         try {
-              $Win32_LogicalDisk = Get-WmiObject -Class Win32_LogicalDisk  |            Where-Object {$_.DeviceID -like $DeviceID}
+ #             $Win32_LogicalDisk = Get-WmiObject -Class Win32_LogicalDisk  |            Where-Object {$_.DeviceID -like $DeviceID}
               $Win32_LogicalDiskToPartition = Get-WmiObject -Class Win32_LogicalDiskToPartition 
               $Win32_DiskDriveToDiskPartition = Get-WmiObject -Class Win32_DiskDriveToDiskPartition 
               if ($DevicePort -match '/') {
+                   $PnPid = ''
                    switch -wildcard ($DevicePort) {
-                        '/dev/sda' {$PnPid = '12BC8F15'}
-                        '/dev/sdb' {$PnPid ='12741CA2' }
-                        '/dev/sdc' {$PnPid ='313A69C0' }
-                        '/dev/sdd' {$PnPid ='1465ECD7' }
-                        '/dev/sde' {$PnPid ='3996988E' }
-                        '/dev/sdf' {$PnPid ='306D8646' }
-                        '/dev/sdg' {$PnPid ='343750B3' }
-                        '/dev/sdh' {$PnPid ='15710395' }
-                        '/dev/sdi' {$PnPid ='9554989' }
-                        '/dev/sdj' {$PnPid ='2E85F540' }
-                        '/dev/sdk' {$PnPid ='11B17857' }
-                        '/dev/sdl' {$PnPid ='36E2240E' }
-                        '/dev/sdm' {$PnPid ='2081A6E3' }
-                        '/dev/sdn' {$PnPid ='1BB59C5' }
-                        '/dev/sdo' {$PnPid ='18257815' }
-                        '/dev/sdp' {$PnPid ='6A0D509' }
-                        '/dev/sdq' {$PnPid ='44C4F5F' }
-                        '/dev/sdr' {$PnPid ='19DFE910' }
-                        '/dev/sds' {$PnPid ='25D4E2F3' }
-                        '/dev/sdt' {$PnPid ='24EF222C' }
-                        '/dev/sdu' {$PnPid ='27E267FA' }
-                        '/dev/sdv' {$PnPid ='1623FED9' }
-                        '/dev/sdw' {$PnPid ='2669CF35' }
-                        '/dev/sdx' {$PnPid ='1740941D' }
+
+                        #kvm
+                        '/dev/sda' {$PnPid = 'E079AC4'}
+                        '/dev/sdb' {$PnPid ='16D8363B' }
+                        '/dev/sdc' {$PnPid ='134DCAD' } 
+                        '/dev/sdd' {$PnPid ='79BBECA' } 
+                        '/dev/sde' {$PnPid ='1071541E' }
+                        '/dev/sdf' {$PnPid ='7A0B8A7' }
+                        '/dev/sdg' {$PnPid ='1FADCB8F' }
+                        '/dev/sdh' {$PnPid ='16DD3018' }
+                        '/dev/sdi' {$PnPid ='2EEA4300' }
+                        '/dev/sdj' {$PnPid ='2619A789' }
+                        '/dev/sdk' {$PnPid ='28BF06A' }
+                        '/dev/sdl' {$PnPid ='35561EFA' }
+                        '/dev/sdm' {$PnPid ='11C867DB' }
+                        '/dev/sdn' {$PnPid ='8F7CC64' }
+                        '/dev/sdo' {$PnPid ='2104DF4C' }
+                        '/dev/sdp' {$PnPid ='183443D5' }
+                        '/dev/sdq' {$PnPid ='15E38109' }
+                        '/dev/sdr' {$PnPid ='D12E592' }
+                        '/dev/sds' {$PnPid ='251FF87A' }
+                        '/dev/sdt' {$PnPid ='1C4F5D03' }
+                        '/dev/sdu' {$PnPid ='345C6FEB' }
+                        '/dev/sdv' {$PnPid ='2B8BD474' }
+                        '/dev/sdw' {$PnPid ='7FE1D55' }
+                        '/dev/sdx' {$PnPid ='3AC84BE5' } 
+                       
                     }
                     $filter = "PNPDeviceID like '%" + $PnPid + "%'"
                     $Win32_DiskDrive = Get-WmiObject -Class Win32_DiskDrive -filter "$filter" 
-              } else { $Win32_DiskDrive = Get-WmiObject -Class Win32_DiskDrive }
+
+                    # try to find a xen id
+                    if (-not $Win32_DiskDrive) {
+
+                          switch -wildcard ($DevicePort) {
+                                #xen
+                                '/dev/sda' {$PnPid = '12BC8F15'} 
+                                '/dev/sdb' {$PnPid ='12741CA2' }
+                                '/dev/sdc' {$PnPid ='313A69C0' }
+                                '/dev/sdd' {$PnPid ='1465ECD7' }
+                                '/dev/sde' {$PnPid ='3996988E' }
+                                '/dev/sdf' {$PnPid ='306D8646' }
+                                '/dev/sdg' {$PnPid ='343750B3' }
+                                '/dev/sdh' {$PnPid ='15710395' }
+                                '/dev/sdi' {$PnPid ='9554989' }
+                                '/dev/sdj' {$PnPid ='2E85F540' }
+                                '/dev/sdk' {$PnPid ='11B17857' }
+                                '/dev/sdl' {$PnPid ='36E2240E' }
+                                '/dev/sdm' {$PnPid ='2081A6E3' }
+                                '/dev/sdn' {$PnPid ='1BB59C5' }
+                                '/dev/sdo' {$PnPid ='18257815' }
+                                '/dev/sdp' {$PnPid ='6A0D509' }
+                                '/dev/sdq' {$PnPid ='44C4F5F' }
+                                '/dev/sdr' {$PnPid ='19DFE910' }
+                                '/dev/sds' {$PnPid ='25D4E2F3' }
+                                '/dev/sdt' {$PnPid ='24EF222C' }
+                                '/dev/sdu' {$PnPid ='27E267FA' }
+                                '/dev/sdv' {$PnPid ='1623FED9' }
+                                '/dev/sdw' {$PnPid ='2669CF35' }
+                                '/dev/sdx' {$PnPid ='1740941D' }
+
+                            }
+                            $filter = "PNPDeviceID like '%" + $PnPid + "%'"
+                            $Win32_DiskDrive = Get-WmiObject -Class Win32_DiskDrive -filter "$filter" 
+                    } #end if not $Win32_DiskDrive
+
+
+              } else { 
+                $Win32_DiskDrive = Get-WmiObject -Class Win32_DiskDrive 
+                $DevicePort = '' 
+              }
               # Search the SCSI Lun Unit for the disk
               # $Win32_DiskDrive | fl *
               $Win32_DiskDrive |
@@ -100,12 +144,45 @@ function Get-DiskScsiLuns {
                             $LogicalDisk = $Win32_LogicalDisk|? {$_.Path.path -eq $LogicalDiskToPartition.Dependent}
                         } else {$LogicalDisk = $null}
                     } else {$LogicalDisk = $null}
+#Write-Verbose "DevicePort: $DevicePort "
+#Write-Verbose $PnPid
+#$(($DiskDrive|?{$_.Partitions -eq $DiskDrive.Partitions}).PNPDeviceID) |Out-String|Write-Verbose
+                        $DevicePort = '' 
                     if ($DiskDrive) {
                         #map physical device name to PNPDeviceID
-                        $DevicePort = $null
-                        switch -wildcard (($Win32_DiskDrive|?{$_.Partitions -eq $DiskDrive.Partitions}).PNPDeviceID) {
-                            '*12BC8F15*' {$DevicePort = '/dev/sda'}
+                        switch -wildcard (($DiskDrive|?{$_.Partitions -eq $DiskDrive.Partitions}).PNPDeviceID) {
+
+                            #kvm
+                            '*E079AC4*' {$DevicePort = '/dev/sda'} 
                             '*12741CA2*' {$DevicePort = '/dev/sdb'}
+                            '*134DCAD*' {$DevicePort = '/dev/sdc'} 
+                            '*79BBECA*' {$DevicePort = '/dev/sdd'} 
+                            '*1071541E*' {$DevicePort = '/dev/sde'}
+                            '*7A0B8A7*' {$DevicePort = '/dev/sdf'}
+                            '*1FADCB8F*' {$DevicePort = '/dev/sdg'}
+                            '*16DD3018*' {$DevicePort = '/dev/sdh'}
+                            '*2EEA4300*' {$DevicePort = '/dev/sdi'}
+                            '*2619A789*' {$DevicePort = '/dev/sdj'}
+                            '*28BF06A*' {$DevicePort = '/dev/sdk'}
+                            '*35561EFA*' {$DevicePort = '/dev/sdl'}
+                            '*11C867DB*' {$DevicePort = '/dev/sdm'}
+                            '*8F7CC64*' {$DevicePort = '/dev/sdn'} 
+                            '*2104DF4C*' {$DevicePort = '/dev/sdo'}
+                            '*183443D5*' {$DevicePort = '/dev/sdp'}
+                            '*15E38109*' {$DevicePort = '/dev/sdq'}
+                            '*D12E592*' {$DevicePort = '/dev/sdr'}
+                            '*251FF87A*' {$DevicePort = '/dev/sds'}
+                            '*1C4F5D03*' {$DevicePort = '/dev/sdt'}
+                            '*345C6FEB*' {$DevicePort = '/dev/sdu'} 
+                            '*2B8BD474*' {$DevicePort = '/dev/sdv'}
+                            '*7FE1D55*' {$DevicePort = '/dev/sdw'}
+                            '*3AC84BE5*' {$DevicePort = '/dev/sdx'}
+
+
+
+                            #xen
+                            '*12BC8F15*' {$DevicePort = '/dev/sda'}
+                            '*16D8363B*' {$DevicePort = '/dev/sdb'}
                             '*313A69C0*' {$DevicePort = '/dev/sdc'}
                             '*1465ECD7*' {$DevicePort = '/dev/sdd'}
                             '*3996988E*' {$DevicePort = '/dev/sde'}
@@ -128,8 +205,10 @@ function Get-DiskScsiLuns {
                             '*1623FED9*' {$DevicePort = '/dev/sdv'}
                             '*2669CF35*' {$DevicePort = '/dev/sdw'}
                             '*1740941D*' {$DevicePort = '/dev/sdx'}
+
                         }
-                        # Return the results
+#Write-Verbose "2 DevicePort: $DevicePort "
+                       # Return the results
                         New-Object -TypeName PSObject -Property @{
                             Index = $DiskDrive.Index
                             DeviceID = $LogicalDisk.DeviceID

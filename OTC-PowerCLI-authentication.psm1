@@ -3,6 +3,7 @@ function Catch-Error {
         )     
     # Dig into the exception to get the Response details.
     write-host $CatchedError -ForegroundColor DarkYellow
+#    return $CatchedError
     write-host $CatchedError.InvocationInfo.PositionMessage -ForegroundColor Cyan
     if ($CatchedError.Exception ) {
         write-host $CatchedError.Exception  -ForegroundColor Magenta

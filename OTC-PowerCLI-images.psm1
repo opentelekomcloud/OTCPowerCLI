@@ -96,10 +96,11 @@ function Get-OTCprivateImages {
    
     try {
         ## Making the call to the API for a list of available server images and storing data into a variable
+        $ImageList = $null
         $ImageList = Invoke-RestMethod -Uri $URL -Headers $HeaderDictionary -timeout 30
         #$ServerImageList.Images|fl
     
-            ## Handling empty response bodies 
+        ## Handling empty response bodies 
         if ($ImageList) {
             $Images = $ImageList.Images
             if ($Name -and $ID) {
@@ -118,7 +119,7 @@ function Get-OTCprivateImages {
             $Images |select -property name,id| Sort-Object Name 
         } else {Write-Error "no Images found."}
     }
-    catch { Catch-Error $_ }
+    catch { Catch-Error $_ ; return $_}
 }
 <#
  .SYNOPSIS
